@@ -2,12 +2,17 @@
 import { EventEmitter } from 'events';
 import autoBind from 'auto-bind';
 import defaultsDeep from 'lodash/defaultsDeep';
+import values from 'lodash/values';
+import flatMap from 'lodash/flatMap';
 import createMapper from './eventSpecs/Mapper';
 
 import LocationSpec from './eventSpecs/Location';
 import ApproachBodySpec from './eventSpecs/ApproachBody';
 import DockedSpec from './eventSpecs/Docked';
 import FSDJumpSpec from './eventSpecs/FSDJump';
+import EventWhiteList from './eventSpecs/EventWhiteList';
+
+const LIST_ACTIONS = new Set(flatMap(values(EventWhiteList)));
 
 class EventFactory extends EventEmitter {
 
@@ -79,7 +84,9 @@ class EventFactory extends EventEmitter {
             handler(event);
         }
 
-        return this.createEvent(event);
+        if (LIST_ACTIONS.has(event.event)) {
+            return this.createEvent(event);
+        }
     }
 
     createEvent(event) {

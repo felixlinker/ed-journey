@@ -23,6 +23,7 @@
     "reactstrap": "^6.1.0"
   },
   "devDependencies": {
-    "electron": "^2.0.3"
+    "electron": "^2.0.3",
+    "electron-react-devtools": "^0.5.3"
   }
 }

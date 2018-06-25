@@ -4,11 +4,6 @@ import mapValues from 'lodash/mapValues';
 import keys from 'lodash/keys';
 
 function createMapper(target, spec) {
-    // create new object if none is given
-    if (!target) {
-        target = {};
-    }
-
     spec = mapValues(spec, v => {
         if (Array.isArray(v)) {
             return v;
@@ -21,6 +16,9 @@ function createMapper(target, spec) {
     });
 
     return function(event) {
+        // create new object if none is given
+        let targetRef = target ? target : {};
+
         keys(spec).forEach(key => {
             let dest = spec[key];
             let data = event[key];
@@ -31,16 +29,16 @@ function createMapper(target, spec) {
             if (!Array.isArray(dest)) {
                 dest = spec[key].dest;
                 let mapper = spec[key].map;
-                if (typeof data === typeof []) {
+                if (Array.isArray(data)) {
                     data = data.map(mapper);
                 } else {
                     data = mapper(data);
                 }
             }
-            set(target, dest, data);
+            set(targetRef, dest, data);
         });
 
-        return target;
+        return targetRef;
     };
 };
 

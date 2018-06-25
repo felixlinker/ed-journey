@@ -6,10 +6,10 @@ import { Container, Row, Col, Nav, Navbar, NavbarBrand, NavItem, NavLink,
 import classnames from 'classnames';
 
 const DEFAULT_SAVE_DIR = require('path').join(
-	require('os').homedir(),
-	'Saved Games',
-	'Frontier Developments',
-	'Elite Dangerous'
+    require('os').homedir(),
+    'Saved Games',
+    'Frontier Developments',
+    'Elite Dangerous'
 );
 
 class App extends React.Component {

@@ -40,14 +40,8 @@ class Details extends React.Component {
             <React.Fragment>
                 {details && details.length > 0 &&
                     <Table>
-                        <thead>
-                            <tr>
-                                <th>Key</th>
-                                <th>Value</th>
-                            </tr>
-                        </thead>
                         <tbody>
-                            <Rows values={details}/>
+                            <Rows firstIsHead={true} values={details}/>
                         </tbody>
                     </Table>}
 

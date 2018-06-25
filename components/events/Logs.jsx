@@ -7,6 +7,8 @@ import autoBind from 'auto-bind';
 import Event from './Event';
 import CheckList from './generic/CheckList';
 
+import EventFactory from './EventFactory';
+
 const PER_PAGE_DEFAULT = 100;
 const PAGINATION_RANGE = 3;
 const PAGINATION_WINDOW = Math.floor(PAGINATION_RANGE / 2);
@@ -22,6 +24,7 @@ class Logs extends React.Component {
         autoBind(this);
 
         this.saveDir = props.saveDir;
+        this.eventFactory = new EventFactory();
         this.events = [];
         this.state = {
             page: 0,
@@ -40,8 +43,10 @@ class Logs extends React.Component {
         this.watcher.on('finished', () => {});
         this.watcher.on('data', obs => {
             obs.forEach(ob => {
-                let {timestamp, event} = ob;
-                this.events.push(ob);
+                let event = this.eventFactory.consume(ob);
+                if (event) {
+                    this.events.push(event);
+                }
             });
             // Update events to display
             this.setState({});

@@ -6,7 +6,7 @@ import Event from './Event';
 
 const PER_PAGE_DEFAULT = 100;
 const PAGINATION_RANGE = 3;
-const PAGINATION_LEFT_OFFSET = Math.floor(PAGINATION_RANGE / 2);
+const PAGINATION_WINDOW = Math.floor(PAGINATION_RANGE / 2);
 
 class Logs extends React.Component {
 
@@ -58,7 +58,7 @@ class Logs extends React.Component {
         let pagesStart = Math.max(
             0,
             Math.min(
-                this.state.page - PAGINATION_LEFT_OFFSET,
+                this.state.page - PAGINATION_WINDOW,
                 pagesNum - PAGINATION_RANGE
             )
         );
@@ -69,10 +69,10 @@ class Logs extends React.Component {
         return (
             <React.Fragment>
                 <Pagination>
-                    <PaginationItem disabled={pages[0] <= 1}>
+                    <PaginationItem disabled={pages[0] <= PAGINATION_WINDOW}>
                         <PaginationLink
                             onClick={(e) => this.setState({
-                                page: pages[0] - 2
+                                page: pages[0] - (PAGINATION_WINDOW + 1)
                             })}
                             previous/>
                     </PaginationItem>
@@ -91,10 +91,12 @@ class Logs extends React.Component {
                         </PaginationItem>
                     ))}
                     <PaginationItem disabled={
-                        pages[pages.length - 1] >= pagesNum - 2}>
+                        pages[pages.length - 1] >= pagesNum
+                            - (PAGINATION_WINDOW + 1)}>
                         <PaginationLink
                             onClick={(e) => this.setState({
-                                page: pages[pages.length - 1] + 2
+                                page: pages[pages.length - 1]
+                                    + (PAGINATION_WINDOW + 1)
                             })}
                             next/>
                     </PaginationItem>

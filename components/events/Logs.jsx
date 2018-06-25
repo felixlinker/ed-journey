@@ -23,6 +23,10 @@ class Logs extends React.Component {
         super(props);
         autoBind(this);
 
+        if (!this.props.onDetails) {
+            this.props.onDetails = () => {};
+        }
+
         this.saveDir = props.saveDir;
         this.eventFactory = new EventFactory();
         this.events = [];
@@ -55,10 +59,6 @@ class Logs extends React.Component {
 
     componentWillUnmount() {
         this.watcher.stop();
-    }
-
-    rowClick(event) {
-        console.log(event);
     }
 
     configureColumnsToggle() {
@@ -162,7 +162,7 @@ class Logs extends React.Component {
                     <tbody>
                         {events.map((e, i) =>
                             <Event key={i} columns={this.state.heads} event={e}
-                                onClick={() => this.rowClick(e)}/>
+                                onClick={() => this.props.onDetails(e)}/>
                         )}
                     </tbody>
                 </Table>

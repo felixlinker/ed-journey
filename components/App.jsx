@@ -4,6 +4,8 @@ import Logs from './events/Logs';
 import { Container, Row, Col, Nav, Navbar, NavbarBrand, NavItem, NavLink,
     TabContent, TabPane } from 'reactstrap';
 import classnames from 'classnames';
+import autoBind from 'auto-bind';
+import Details from './events/Details';
 
 const DEFAULT_SAVE_DIR = require('path').join(
     require('os').homedir(),
@@ -13,6 +15,24 @@ const DEFAULT_SAVE_DIR = require('path').join(
 );
 
 class App extends React.Component {
+
+    constructor(props) {
+        super(props);
+        autoBind(this);
+
+        this.logs = (<Logs saveDir={DEFAULT_SAVE_DIR}
+            onDetails={this.displayDetails}/>);
+
+        this.state = {
+            details: null,
+        };
+    }
+
+    displayDetails(event) {
+        this.setState({
+            details: event,
+        });
+    }
 
     render() {
         return (
@@ -38,11 +58,14 @@ class App extends React.Component {
                     <TabPane tabId="1">
                         <Container>
                             <Row>
-                                <Col><Logs saveDir={DEFAULT_SAVE_DIR} /></Col>
+                                <Col>{this.logs}</Col>
                                 <Col xs="3">
                                     <Row><Nav><h5>Details</h5></Nav></Row>
                                     <Row>
-                                        {/* TODO: details on row click */}
+                                        {this.state.details &&
+                                            <Details
+                                                event={this.state.details}/>
+                                        }
                                     </Row>
                                 </Col>
                             </Row>

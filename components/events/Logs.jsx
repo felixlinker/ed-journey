@@ -57,8 +57,8 @@ class Logs extends React.Component {
         this.watcher.stop();
     }
 
-    rowClick() {
-        // TODO: show details
+    rowClick(event) {
+        console.log(event);
     }
 
     configureColumnsToggle() {
@@ -161,7 +161,8 @@ class Logs extends React.Component {
                     </thead>
                     <tbody>
                         {events.map((e, i) =>
-                            <Event key={i} columns={this.state.heads} event={e}/>
+                            <Event key={i} columns={this.state.heads} event={e}
+                                onClick={() => this.rowClick(e)}/>
                         )}
                     </tbody>
                 </Table>

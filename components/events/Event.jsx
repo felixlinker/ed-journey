@@ -5,7 +5,7 @@ class Event extends React.Component {
 
     render() {
         return (
-            <tr>
+            <tr onClick={this.props.onClick || (() => {})}>
                 {this.props.columns.map(key =>
                     <td key={key}>{this.props.event[key] || ''}</td>
                 )}

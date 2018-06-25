@@ -1,8 +1,9 @@
 
 import React from 'react';
-import { Table } from 'reactstrap';
+import { Table, ListGroup, ListGroupItem, Popover, Button } from 'reactstrap';
 import keys from 'lodash/keys';
 import get from 'lodash/get';
+import autoBind from 'auto-bind';
 import Rows from './generic/Rows';
 import representationBuilder from './eventRepresentation/RepresentationBuilder';
 
@@ -29,12 +30,46 @@ const PASS = () => {};
 
 class Details extends React.Component {
 
+    constructor(props) {
+        super(props);
+        autoBind(this);
+
+        this.state = {
+            showSystemInfo: false,
+            showBodyInfo: false,
+            showStationInfo: false,
+            showMfInfo: false,
+        }
+    }
+
+    toggleSystemInfo() {
+        this.setState({
+            showSystemInfo: !this.state.showSystemInfo
+        });
+    }
+
+    toggleBodyInfo() {
+        this.setState({
+            showBodyInfo: !this.state.showBodyInfo
+        });
+    }
+
+    toggleStationInfo() {
+        this.setState({
+            showStationInfo: !this.state.showStationInfo
+        });
+    }
+
+    toggleMfInfo() {
+        this.setState({
+            showMfInfo: !this.state.showMfInfo
+        });
+    }
+
     render() {
         let event = this.props.event;
+        let location = event._state.location;
         let details = (get(REPRESENTATION_MAP, event.event, PASS))(event);
-
-        let system = this.props.event._state.location.system;
-        let systemDetails = keys(system).map(k => [k, system[k]]);
 
         return (
             <React.Fragment>
@@ -45,17 +80,57 @@ class Details extends React.Component {
                         </tbody>
                     </Table>}
 
-                <Table>
-                    <thead>
-                        <tr>
-                            <th>Key</th>
-                            <th>Value</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <Rows values={systemDetails}/>
-                    </tbody>
-                </Table>
+                <ListGroup>
+                    <ListGroupItem><h6>Location</h6></ListGroupItem>
+                    {location.system.address &&
+                        <ListGroupItem>In system
+                            <Button id="system-button"
+                                onClick={this.toggleSystemInfo}>
+                                {location.system.name}
+                            </Button>
+                            <Popover placement="bottom" target="system-button"
+                                isOpen={this.state.showSystemInfo}
+                                toggle={this.toggleSystemInfo}>
+                                {JSON.stringify(location.system)}
+                            </Popover>
+                        </ListGroupItem>}
+                    {location.body.id &&
+                        <ListGroupItem>At body
+                            <Button id="body-button"
+                                onClick={this.toggleBodyInfo}>
+                                {location.body.name}
+                            </Button>
+                            <Popover placement="bottom" target="body-button"
+                                isOpen={this.state.showBodyInfo}
+                                toggle={this.toggleBodyInfo}>
+                                {JSON.stringify(location.body)}
+                            </Popover>
+                        </ListGroupItem>}
+                    {location.station.name &&
+                        <ListGroupItem>At station
+                            <Button id="station-button"
+                                onClick={this.toggleStationInfo}>
+                                {location.station.name}
+                            </Button>
+                            <Popover placement="bottom" target="station-button"
+                                isOpen={this.state.showStationInfo}
+                                toggle={this.toggleStationInfo}>
+                                {JSON.stringify(location.station)}
+                            </Popover>
+                        </ListGroupItem>}
+                    {location.factions.length &&
+                        <ListGroupItem>
+                            <Button id="mf-button"
+                                onClick={this.toggleMfInfo}>
+                                Show minor factions
+                            </Button>
+                            <Popover placement="bottom" target="mf-button"
+                                isOpen={this.state.showMfInfo}
+                                toggle={this.toggleMfInfo}>
+                                {JSON.stringify(location.factions)}
+                            </Popover>
+                        </ListGroupItem>}
+                </ListGroup>
             </React.Fragment>
         );
     }

@@ -14,10 +14,11 @@ class Logs extends React.Component {
         super(props);
 
         this.saveDir = props.saveDir;
-        this.rows = [];
+        this.events = [];
         this.state = {
             page: 0,
             perPage: PER_PAGE_DEFAULT,
+            heads: ['timestamp', 'event', ],
         };
     }
 
@@ -31,9 +32,9 @@ class Logs extends React.Component {
         this.watcher.on('data', obs => {
             obs.forEach(ob => {
                 let {timestamp, event} = ob;
-                this.rows.push(<Event event={ob}/>);
+                this.events.push(ob);
             });
-            // Update rows to display
+            // Update events to display
             this.setState({});
         });
     }
@@ -47,14 +48,14 @@ class Logs extends React.Component {
     }
 
     render() {
-        // Select rows to display based on page selection
-        let offset = this.rows.length - this.state.page * this.state.perPage;
-        let rows = this.rows.slice(
+        // Select events to display based on page selection
+        let offset = this.events.length - this.state.page * this.state.perPage;
+        let events = this.events.slice(
             Math.max(0, offset - this.state.perPage),
             offset
         );
 
-        let pagesNum = Math.ceil(this.rows.length / this.state.perPage);
+        let pagesNum = Math.ceil(this.events.length / this.state.perPage);
         let pagesStart = Math.max(
             0,
             Math.min(
@@ -105,11 +106,16 @@ class Logs extends React.Component {
                 <Table>
                     <thead>
                         <tr>
-                            <th>Timestamp</th>
-                            <th>Event</th>
+                            {this.state.heads.map(head =>
+                                <th key={head}>{head}</th>
+                            )}
                         </tr>
                     </thead>
-                    <tbody>{rows}</tbody>
+                    <tbody>
+                        {events.map(e =>
+                            <Event columns={this.state.heads} event={e}/>
+                        )}
+                    </tbody>
                 </Table>
             </React.Fragment>
         );

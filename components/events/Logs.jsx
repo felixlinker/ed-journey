@@ -1,10 +1,11 @@
 
 import React from 'react';
 import { Table, Pagination, PaginationItem, PaginationLink, Popover, Button,
-    PopoverHeader, PopoverBody, Container, Row, Col } from 'reactstrap';
+    PopoverHeader, PopoverBody, Container, Row, Col, Nav } from 'reactstrap';
 import { LogWatcher } from 'ed-logwatcher';
 import autoBind from 'auto-bind';
 import Event from './Event';
+import Details from './Details';
 import CheckList from './generic/CheckList';
 
 import EventFactory from './EventFactory';
@@ -23,10 +24,6 @@ class Logs extends React.Component {
         super(props);
         autoBind(this);
 
-        if (!this.props.onDetails) {
-            this.props.onDetails = () => {};
-        }
-
         this.saveDir = props.saveDir;
         this.eventFactory = new EventFactory();
         this.events = [];
@@ -35,6 +32,7 @@ class Logs extends React.Component {
             perPage: PER_PAGE_DEFAULT,
             heads: ['timestamp', 'event', ],
             configureColumns: false,
+            details: null,
         };
     }
 
@@ -94,10 +92,9 @@ class Logs extends React.Component {
             .map(index => index + pagesStart);
 
         return (
-            <React.Fragment>
                 <Container>
                     <Row>
-                        <Col md={{ size: 4, offset: 2}}>
+                    <Col md={{ size: 4 }}>
                             <Pagination>
                                 <PaginationItem disabled={pages[0] <= PAGINATION_WINDOW}>
                                     <PaginationLink
@@ -134,7 +131,7 @@ class Logs extends React.Component {
                             </Pagination>
                         </Col>
 
-                        <Col md={{ size: 4, offset: 2}}>
+                    <Col md={{ size: 4 }}>
                             <Button id="rows-popover" onClick={this.configureColumnsToggle}>
                                 Configure rows
                             </Button>
@@ -149,9 +146,9 @@ class Logs extends React.Component {
                             </Popover>
                         </Col>
                     </Row>
-                </Container>
 
-                <Table>
+                <Row>
+                    <Col><Table>
                     <thead>
                         <tr>
                             {this.state.heads.map(head =>
@@ -161,12 +158,23 @@ class Logs extends React.Component {
                     </thead>
                     <tbody>
                         {events.map((e, i) =>
-                            <Event key={i} columns={this.state.heads} event={e}
-                                onClick={() => this.props.onDetails(e)}/>
+                                <Event key={i} columns={this.state.heads}
+                                    event={e} onClick={() => this.setState({
+                                        details: e
+                                    })}/>
                         )}
                     </tbody>
-                </Table>
-            </React.Fragment>
+                    </Table></Col>
+                    <Col xs="3">
+                        <Row><Nav><h5>Details</h5></Nav></Row>
+                        <Row>
+                            {this.state.details &&
+                                <Details event={this.state.details}/>
+                            }
+                        </Row>
+                    </Col>
+                </Row>
+            </Container>
         );
     }
 }

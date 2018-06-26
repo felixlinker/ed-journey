@@ -4,8 +4,16 @@ import { Table, ListGroup, ListGroupItem, Popover, Button } from 'reactstrap';
 import keys from 'lodash/keys';
 import get from 'lodash/get';
 import autoBind from 'auto-bind';
-import Rows from './generic/Rows';
+import SimpleTable from './generic/SimpleTable';
 import representationBuilder from './eventRepresentation/RepresentationBuilder';
+
+import SystemRepr from './stateRepresentation/System';
+import BodyRepr from './stateRepresentation/Body';
+import StationRepr from './stateRepresentation/Station';
+import MinorFactions from './stateRepresentation/MinorFactions';
+const SYSTEM = representationBuilder(SystemRepr);
+const BODY = representationBuilder(BodyRepr);
+const STATION = representationBuilder(StationRepr);
 
 import ApproachBodyRepr from './eventRepresentation/ApproachBody';
 import DockedRepr from './eventRepresentation/Docked';
@@ -74,11 +82,7 @@ class Details extends React.Component {
         return (
             <React.Fragment>
                 {details && details.length > 0 &&
-                    <Table>
-                        <tbody>
-                            <Rows firstIsHead={true} values={details}/>
-                        </tbody>
-                    </Table>}
+                    <SimpleTable values={details}/>}
 
                 <ListGroup>
                     <ListGroupItem><h6>Location</h6></ListGroupItem>
@@ -91,10 +95,10 @@ class Details extends React.Component {
                             <Popover placement="bottom" target="system-button"
                                 isOpen={this.state.showSystemInfo}
                                 toggle={this.toggleSystemInfo}>
-                                {JSON.stringify(location.system)}
+                                <SimpleTable values={SYSTEM(location.system)}/>
                             </Popover>
                         </ListGroupItem>}
-                    {location.body.id &&
+                    {(location.body.id && !location.station.name) &&
                         <ListGroupItem>At body
                             <Button id="body-button"
                                 onClick={this.toggleBodyInfo}>
@@ -103,7 +107,7 @@ class Details extends React.Component {
                             <Popover placement="bottom" target="body-button"
                                 isOpen={this.state.showBodyInfo}
                                 toggle={this.toggleBodyInfo}>
-                                {JSON.stringify(location.body)}
+                                <SimpleTable values={BODY(location.body)}/>
                             </Popover>
                         </ListGroupItem>}
                     {location.station.name &&
@@ -115,7 +119,8 @@ class Details extends React.Component {
                             <Popover placement="bottom" target="station-button"
                                 isOpen={this.state.showStationInfo}
                                 toggle={this.toggleStationInfo}>
-                                {JSON.stringify(location.station)}
+                                <SimpleTable
+                                    values={STATION(location.station)}/>
                             </Popover>
                         </ListGroupItem>}
                     {location.factions.length &&
@@ -127,7 +132,8 @@ class Details extends React.Component {
                             <Popover placement="bottom" target="mf-button"
                                 isOpen={this.state.showMfInfo}
                                 toggle={this.toggleMfInfo}>
-                                {JSON.stringify(location.factions)}
+                                {/* {JSON.stringify(location.factions)} */}
+                                <MinorFactions factions={location.factions}/>
                             </Popover>
                         </ListGroupItem>}
                 </ListGroup>

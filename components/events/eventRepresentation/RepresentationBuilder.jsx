@@ -13,6 +13,10 @@ function checkValue(key, spec, event) {
     if (specType === 'string') {
         return event[spec];
     }
+    if (Array.isArray(spec)) {
+        return spec.map(subSpec => checkValue(key, subSpec, event))
+            .join(', ');
+    }
 }
 
 export default function(reprSpec) {
